@@ -16,6 +16,11 @@
 #include <tvm/solver/defaultLeastSquareSolver.h>
 #include <tvm/task_dynamics/ProportionalDerivative.h>
 
+#include <iostream>
+#include <fstream>
+
+#include <iomanip>  // For std::setw
+#include <string>
 namespace mc_solver
 {
 
@@ -118,6 +123,7 @@ bool TVMQPSolver::runCommon()
     t->update(*this);
     t->incrementIterInSolver();
   }
+
   auto start_t = mc_rtc::clock::now();
   auto r = solver_.solve(problem_);
   solve_dt_ = mc_rtc::clock::now() - start_t;
@@ -126,12 +132,213 @@ bool TVMQPSolver::runCommon()
 
 bool TVMQPSolver::runOpenLoop()
 {
+  int i = 0;
+  for(auto & robot : *robots_p)
+  {
+     std::cout << "i: " << i << std::endl;
+     std::cout << robot.name() << std ::endl; 
+
+    if(i == 0)
+    {
+      std :: cout  << robot.name() << std::endl;
+ 
+// Prints tvm q 
+      std::ofstream pos("tvmrobot-q.csv");
+
+        if(pos.is_open())
+        {
+          pos << std::setw(15) << robot.tvmRobot().q()->value() << " ";
+          pos.close();
+          std::cout << "Matrix saved to tvmrobot-q.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening tvmpos" << std::endl;
+        } 
+
+// Prints tvm alpha
+      std::ofstream speed("tvmrobot-alpha.csv");
+
+      if(speed.is_open())
+      {
+        speed << std::setw(15) << robot.tvmRobot().alpha()->value() << " ";
+        speed.close();
+        std::cout << "Matrix saved to tvmrobot-alpha.csv" << std::endl;
+      }else{
+        std::cerr << "Error opening tvmspeed" << std::endl;
+      } 
+// robot q
+        std::ofstream posR("robot-q.csv");
+
+        if(posR.is_open())
+        {
+          for(const auto& row: robot.mbc().q)
+          {
+            for(const auto& col: row)
+            {
+              posR << std::setw(15) << col << " ";
+            }
+            posR << "\n"; 
+          }
+          posR.close();
+          std::cout << "Matrix saved to robot-q.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening pos" << std::endl;
+        } 
+// Prints alpha
+      std::ofstream speedR("robot-alpha.csv");
+
+      if(speedR.is_open())
+      {
+          for(const auto& row: robot.mbc().alpha)
+          {
+            for(const auto& col: row)
+            {
+              speedR << std::setw(15) << col << " ";
+            }
+            speedR << "\n"; 
+          }
+        speedR.close();
+        std::cout << "Matrix saved to robot-alpha.csv" << std::endl;
+      }else{
+        std::cerr << "Error opening speed" << std::endl;
+      } 
+    }
+    i++;
+
+  }
+
   if(runCommon())
   {
+    std::cout << "(*robots_p)[0].name(): " << (*robots_p)[0].name() << std::endl;
+    int j = 0;
     for(auto & robot : *robots_p)
     {
       auto & mb = robot.mb();
       if(mb.nrDof() > 0) { updateRobot(robot); }
+
+      std::cout << robot.name() << std ::endl;
+
+    if(j==0)
+    {
+    //H
+        std::ofstream mass("matrix-tvm-H.csv");
+
+        if(mass.is_open())
+        {
+          mass << robot.tvmRobot().H().matrix();
+          mass.close();
+          std::cout << "Matrix saved to matrix-tvm-H.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening matrix-tvm-H" << std::endl;
+        }  
+
+        std::ofstream cor("matrix-tvm-C.csv");
+    // C
+        if(cor.is_open())
+        {
+          cor << robot.tvmRobot().C().matrix();
+          cor.close();
+          std::cout << "Matrix saved to matrix-tvm-C.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening matrix-tvm-C" << std::endl;
+        }
+
+        // Prints robot qdotdot
+        std::ofstream accR("robot-alphaD.csv");
+
+        if(accR.is_open())
+        {
+            for(const auto& row: robot.mbc().alphaD)
+            {
+              for(const auto& col: row)
+              {
+                accR << std::setw(15) << col << " ";
+              }
+              accR << "\n"; 
+            }
+          accR.close();
+          std::cout << "Matrix saved to robot-alphaD.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening speed" << std::endl;
+        } 
+
+//print robot tau
+
+        std::ofstream tau("robot-tau.csv");
+
+        if(tau.is_open())
+        {
+            for(const auto& row: robot.mbc().jointTorque)
+            {
+              for(const auto& col: row)
+              {
+                tau << std::setw(15) << col << " ";
+              }
+              tau << "\n"; 
+            }
+          tau.close();
+          std::cout << "Matrix saved to robot-tau.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening tau" << std::endl;
+        } 
+
+//print forces
+
+        std::ofstream force("robot-force.csv");
+
+        if(force.is_open())
+        {
+          for(const auto& f: robot.mbc().force)
+          {
+
+            force << f;
+            force << "\n";
+
+          }
+          force.close();
+          std::cout << "Matrix saved to robot-force.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening force" << std::endl;
+        } 
+
+        // Prints tvm alphaD
+    std::ofstream acc("tvmrobot-alphaD.csv");
+
+    if(acc.is_open())
+    {
+      acc << std::setw(15) << robot.tvmRobot().alphaD()->value() << " ";
+      acc.close();
+      std::cout << "Matrix saved to tvmrobot-alphaD.csv" << std::endl;
+    }else{
+      std::cerr << "Error opening acc" << std::endl;
+    } 
+
+    // Prints tvm torque
+      std::ofstream torque("tvmrobot-torque.csv");
+
+      if(torque.is_open())
+      {
+        torque << std::setw(15) << robot.tvmRobot().tau()->value() << " ";
+        torque.close();
+        std::cout << "Matrix saved to tvmrobot-torque.csv" << std::endl;
+      }else{
+        std::cerr << "Error opening torque" << std::endl;
+      } 
+
+    // Prints tvm contact forces
+      std::ofstream forces("tvmrobot-tauexternal.csv");
+
+      if(forces.is_open())
+      {
+        forces << std::setw(15) << robot.tvmRobot().tauExternal().value() << " ";
+        forces.close();
+        std::cout << "Matrix saved to tvm-tauexternal.csv" << std::endl;
+      }else{
+        std::cerr << "Error opening tau external" << std::endl;
+      } 
+
+
+    }  
+        j++; 
     }
     return true;
   }
@@ -220,11 +427,81 @@ bool TVMQPSolver::runClosedLoop(bool integrateControlState)
     robot.forwardKinematics();
     robot.forwardVelocity();
     robot.forwardAcceleration();
+
+    std::cout << "i: " << i << std::endl; 
+
+    if(i == 0)
+    {
+      std :: cout  << robot.name() << std::endl;
+ 
+// Prints tvm q 
+      std::ofstream pos("tvmrobot-q.csv");
+
+        if(pos.is_open())
+        {
+          pos << std::setw(15) << robot.tvmRobot().q()->value() << " ";
+          pos.close();
+          std::cout << "Matrix saved to tvmrobot-q.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening tvmpos" << std::endl;
+        } 
+
+// Prints tvm alpha
+      std::ofstream speed("tvmrobot-alpha.csv");
+
+      if(speed.is_open())
+      {
+        speed << std::setw(15) << robot.tvmRobot().alpha()->value() << " ";
+        speed.close();
+        std::cout << "Matrix saved to tvmrobot-alpha.csv" << std::endl;
+      }else{
+        std::cerr << "Error opening tvmspeed" << std::endl;
+      } 
+// robot q
+        std::ofstream posR("robot-q.csv");
+
+        if(posR.is_open())
+        {
+          for(const auto& row: robot.mbc().q)
+          {
+            for(const auto& col: row)
+            {
+              posR << std::setw(15) << col << " ";
+            }
+            posR << "\n"; 
+          }
+          posR.close();
+          std::cout << "Matrix saved to robot-q.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening pos" << std::endl;
+        } 
+// Prints alpha
+      std::ofstream speedR("robot-alpha.csv");
+
+      if(speedR.is_open())
+      {
+          for(const auto& row: robot.mbc().alpha)
+          {
+            for(const auto& col: row)
+            {
+              speedR << std::setw(15) << col << " ";
+            }
+            speedR << "\n"; 
+          }
+        speedR.close();
+        std::cout << "Matrix saved to robot-alpha.csv" << std::endl;
+      }else{
+        std::cerr << "Error opening speed" << std::endl;
+      } 
+    }
+
   }
 
+  std::cout << "runCommon" << std::endl;
   // Solve QP and integrate
   if(runCommon())
   {
+    // exit(0);
     for(size_t i = 0; i < robots_p->size(); ++i)
     {
       auto & robot = robots_p->robot(i);
@@ -235,7 +512,126 @@ bool TVMQPSolver::runClosedLoop(bool integrateControlState)
         robot.alpha() = control_alpha_[i];
       }
       updateRobot(robot);
-    }
+
+// Prints robot qdotdot
+        std::ofstream accR("robot-alphaD.csv");
+
+        if(accR.is_open())
+        {
+            for(const auto& row: robot.mbc().alphaD)
+            {
+              for(const auto& col: row)
+              {
+                accR << std::setw(15) << col << " ";
+              }
+              accR << "\n"; 
+            }
+          accR.close();
+          std::cout << "Matrix saved to robot-alphaD.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening speed" << std::endl;
+        } 
+
+//print robot tau
+
+        std::ofstream tau("robot-tau.csv");
+
+        if(tau.is_open())
+        {
+            for(const auto& row: robot.mbc().jointTorque)
+            {
+              for(const auto& col: row)
+              {
+                tau << std::setw(15) << col << " ";
+              }
+              tau << "\n"; 
+            }
+          tau.close();
+          std::cout << "Matrix saved to robot-tau.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening tau" << std::endl;
+        } 
+
+//print forces
+
+        std::ofstream force("robot-force.csv");
+
+        if(force.is_open())
+        {
+          for(const auto& f: robot.mbc().force)
+          {
+
+            force << f;
+            force << "\n";
+
+          }
+          force.close();
+          std::cout << "Matrix saved to robot-force.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening force" << std::endl;
+        } 
+
+  
+// H
+    std::ofstream mass("matrix-tvm-H.csv");
+
+    if(mass.is_open())
+    {
+      mass << robot.tvmRobot().H().matrix();
+      mass.close();
+      std::cout << "Matrix saved to matrix-tvm-H.csv" << std::endl;
+    }else{
+      std::cerr << "Error opening file" << std::endl;
+    }  
+
+    std::ofstream cor("matrix-tvm-C.csv");
+// C
+    if(cor.is_open())
+    {
+      cor << robot.tvmRobot().C().matrix();
+      cor.close();
+      std::cout << "Matrix saved to matrix-tvm-C.csv" << std::endl;
+    }else{
+      std::cerr << "Error opening file" << std::endl;
+    }  
+
+// Prints tvm alphaD
+    std::ofstream acc("tvmrobot-alphaD.csv");
+
+    if(acc.is_open())
+    {
+      acc << std::setw(15) << robot.tvmRobot().alphaD()->value() << " ";
+      acc.close();
+      std::cout << "Matrix saved to tvmrobot-alphaD.csv" << std::endl;
+    }else{
+      std::cerr << "Error opening acc" << std::endl;
+    } 
+
+// Prints tvm torque
+  std::ofstream torque("tvmrobot-torque.csv");
+
+  if(torque.is_open())
+  {
+    torque << std::setw(15) << robot.tvmRobot().tau()->value() << " ";
+    torque.close();
+    std::cout << "Matrix saved to tvmrobot-torque.csv" << std::endl;
+  }else{
+    std::cerr << "Error opening torque" << std::endl;
+  } 
+
+// Prints tvm contact forces
+  std::ofstream forces("tvmrobot-tauexternal.csv");
+
+  if(forces.is_open())
+  {
+    forces << std::setw(15) << robot.tvmRobot().tauExternal().value() << " ";
+    forces.close();
+    std::cout << "Matrix saved to tvm-tauexternal.csv" << std::endl;
+  }else{
+    std::cerr << "Error opening tau external" << std::endl;
+  } 
+
+ }
     return true;
   }
   return false;
@@ -291,6 +687,9 @@ void TVMQPSolver::addDynamicsConstraint(mc_solver::DynamicsConstraint * dyn)
       }
     }
   }
+
+  logger_->addLogEntry("TVM matrix H " + (*robots_p)[0].name() + std::to_string(dynamics_.size()), [&, this](){return (*robots_p)[0].tvmRobot().H().norm();});
+  logger_->addLogEntry("TVM matrix C " + (*robots_p)[0].name() + std::to_string(dynamics_.size()), [&, this](){return (*robots_p)[0].tvmRobot().C().norm();});
 }
 
 void TVMQPSolver::removeDynamicsConstraint(mc_solver::ConstraintSet * maybe_dyn)

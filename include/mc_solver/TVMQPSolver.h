@@ -42,6 +42,10 @@ struct MC_SOLVER_DLLAPI TVMQPSolver final : public QPSolver
   /** Access the internal problem (const) */
   inline const tvm::LinearizedControlProblem & problem() const noexcept { return problem_; }
 
+
+   /** Access the WLS solver (const9\) */ 
+  inline const tvm::scheme::WeightedLeastSquares & solver() const noexcept { return solver_; }
+
   /** Helper to get a \ref TVMQPSolver from a \ref QPSolver instance
    *
    * The caller should make sure the cast is valid by checking the QPSolver backend.

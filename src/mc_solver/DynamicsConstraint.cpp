@@ -134,6 +134,7 @@ void DynamicsConstraint::addToSolverImpl(QPSolver & solver)
       constraints_.push_back(dyn);
       auto cstr = problem.constraint(*dyn);
       problem.add(tvm::hint::Substitution(cstr, tvm_robot.tau()));
+      
       break;
     }
     default:

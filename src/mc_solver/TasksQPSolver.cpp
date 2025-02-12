@@ -10,6 +10,17 @@
 
 #include <boost/chrono.hpp>
 
+#include "mc_solver/QPSolver.h"
+#include <cstddef>
+#include <iostream>
+#include <fstream>
+#include <string>
+
+#include <iomanip>  // For std::setw
+#include <tvm/scheme/internal/helpers.h>
+
+#include <string>
+
 namespace mc_solver
 {
 
@@ -181,9 +192,35 @@ bool TasksQPSolver::run_impl(FeedbackType fType)
   }
   for(auto * dyn : dynamicsConstraints_)
   {
+    std::cout << "begin" << std::endl;
     dyn->motionConstr().computeTorque(solver_.alphaDVec(), solver_.lambdaVec());
     rbd::vectorToParam(dyn->motionConstr().torque(), robot(dyn->robotIndex()).mbc().jointTorque);
+    std::cout << "finish" << std::endl;
+
+    std::ofstream mass("matrix-tasks-H.csv");
+
+    if(mass.is_open())
+    {
+      mass << dyn->motionConstr().fd().H();
+      mass.close();
+      std::cout << "Matrix saved to matrix-tasks-H.csv" << std::endl;
+    }else{
+      std::cerr << "Error opening file" << std::endl;
+    } 
+
+    std::ofstream cor("matrix-tasks-C.csv");
+
+    if(cor.is_open())
+    {
+      cor << dyn->motionConstr().fd().C();
+      cor.close();
+      std::cout << "Matrix saved to matrix-tasks-C.csv" << std::endl;
+    }else{
+      std::cerr << "Error opening file" << std::endl;
+    } 
+
   }
+
   return success;
 }
 
@@ -195,6 +232,59 @@ bool TasksQPSolver::runOpenLoop()
     t->update(*this);
     t->incrementIterInSolver();
   }
+
+  int i = 0;
+  for(auto & robot : *robots_p)
+  {
+     std::cout << "i: " << i << std::endl; 
+
+    if(i == 0)
+    {
+      std :: cout  << robot.name() << std::endl;
+      //print q, qdot
+
+      // Prints q 
+      std::ofstream pos("tasks-q.csv");
+
+        if(pos.is_open())
+        {
+          for(const auto& row: robot.mbc().q)
+          {
+            for(const auto& col: row)
+            {
+              pos << std::setw(15) << col << " ";
+            }
+            pos << "\n"; 
+          }
+          pos.close();
+          std::cout << "Matrix saved to tasks-q.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening q" << std::endl;
+        } 
+
+      // Prints alpha
+      std::ofstream speed("tasks-alpha.csv");
+
+      if(speed.is_open())
+      {
+          for(const auto& row: robot.mbc().alpha)
+          {
+            for(const auto& col: row)
+            {
+              speed << std::setw(15) << col << " ";
+            }
+            speed << "\n"; 
+          }
+        speed.close();
+        std::cout << "Matrix saved to tasks-alpha.csv" << std::endl;
+      }else{
+        std::cerr << "Error opening alpha" << std::endl;
+      } 
+    }
+    i++;
+
+  }
+
   if(solver_.solveNoMbcUpdate(robots_p->mbs(), robots_p->mbcs()))
   {
     for(size_t i = 0; i < robots_p->mbs().size(); ++i)
@@ -207,6 +297,64 @@ bool TasksQPSolver::runOpenLoop()
         robot.forwardKinematics();
         robot.forwardVelocity();
         robot.forwardAcceleration();
+
+         // Prints qdotdot
+        std::ofstream acc("tasks-alphaD.csv");
+
+        if(acc.is_open())
+        {
+            for(const auto& row: robot.mbc().alphaD)
+            {
+              for(const auto& col: row)
+              {
+                acc << std::setw(15) << col << " ";
+              }
+              acc << "\n"; 
+            }
+          acc.close();
+          std::cout << "Matrix saved to tasks-alphaD.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening alphaD" << std::endl;
+        } 
+
+        //print tau
+
+        std::ofstream tau("tasks-tau.csv");
+
+        if(tau.is_open())
+        {
+            for(const auto& row: robot.mbc().jointTorque)
+            {
+              for(const auto& col: row)
+              {
+                tau << std::setw(15) << col << " ";
+              }
+              tau << "\n"; 
+            }
+          tau.close();
+          std::cout << "Matrix saved to tasks-tau.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening tau" << std::endl;
+        } 
+
+        //print forces
+
+        std::ofstream force("tasks-force.csv");
+
+        if(force.is_open())
+        {
+          for(const auto& f: robot.mbc().force)
+          {
+
+            force << f;
+            force << "\n";
+
+          }
+          force.close();
+          std::cout << "Matrix saved to tasks-force.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening force" << std::endl;
+        } 
       }
     }
     return true;
@@ -312,6 +460,53 @@ bool TasksQPSolver::runClosedLoop(bool integrateControlState)
     robot.forwardKinematics();
     robot.forwardVelocity();
     robot.forwardAcceleration();
+
+    // print q, qdot 
+
+    if(i == 0)
+    {
+      std :: cout  << robot.name() << std::endl;
+      //print q, qdot
+
+      // Prints q 
+      std::ofstream pos("tasks-q.csv");
+
+        if(pos.is_open())
+        {
+          for(const auto& row: robot.mbc().q)
+          {
+            for(const auto& col: row)
+            {
+              pos << std::setw(15) << col << " ";
+            }
+            pos << "\n"; 
+          }
+          pos.close();
+          std::cout << "Matrix saved to tasksrobot-q.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening q" << std::endl;
+        } 
+
+      // Prints alpha
+      std::ofstream speed("tasks-alpha.csv");
+
+      if(speed.is_open())
+      {
+          for(const auto& row: robot.mbc().alpha)
+          {
+            for(const auto& col: row)
+            {
+              speed << std::setw(15) << col << " ";
+            }
+            speed << "\n"; 
+          }
+        speed.close();
+        std::cout << "Matrix saved to tasks-alpha.csv" << std::endl;
+      }else{
+        std::cerr << "Error opening alpha" << std::endl;
+      } 
+    }
+
   }
 
   // Update tasks and constraints from estimated robots
@@ -325,6 +520,8 @@ bool TasksQPSolver::runClosedLoop(bool integrateControlState)
   // Solve QP and integrate
   if(solver_.solveNoMbcUpdate(robots_p->mbs(), robots_p->mbcs()))
   {
+
+    std :: cout << "robots_p->mbs().size(): " << robots_p->mbs().size() << std::endl;
     for(size_t i = 0; i < robots_p->mbs().size(); ++i)
     {
       auto & robot = robots().robot(i);
@@ -340,6 +537,64 @@ bool TasksQPSolver::runClosedLoop(bool integrateControlState)
         robot.forwardKinematics();
         robot.forwardVelocity();
         robot.forwardAcceleration();
+
+        // Prints qdotdot
+        std::ofstream acc("tasks-alphaD.csv");
+
+        if(acc.is_open())
+        {
+            for(const auto& row: robot.mbc().alphaD)
+            {
+              for(const auto& col: row)
+              {
+                acc << std::setw(15) << col << " ";
+              }
+              acc << "\n"; 
+            }
+          acc.close();
+          std::cout << "Matrix saved to tasks-alphaD.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening alphaD" << std::endl;
+        } 
+
+        //print tau
+
+        std::ofstream tau("tasks-tau.csv");
+
+        if(tau.is_open())
+        {
+            for(const auto& row: robot.mbc().jointTorque)
+            {
+              for(const auto& col: row)
+              {
+                tau << std::setw(15) << col << " ";
+              }
+              tau << "\n"; 
+            }
+          tau.close();
+          std::cout << "Matrix saved to tasks-tau.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening tau" << std::endl;
+        } 
+
+        //print forces
+
+        std::ofstream force("tasks-force.csv");
+
+        if(force.is_open())
+        {
+          for(const auto& f: robot.mbc().force)
+          {
+
+            force << f;
+            force << "\n";
+
+          }
+          force.close();
+          std::cout << "Matrix saved to tasks-force.csv" << std::endl;
+        }else{
+          std::cerr << "Error opening force" << std::endl;
+        } 
       }
     }
     return true;
@@ -383,6 +638,8 @@ const Eigen::VectorXd & TasksQPSolver::result() const
 void TasksQPSolver::addDynamicsConstraint(mc_solver::DynamicsConstraint * dynamics)
 {
   dynamicsConstraints_.push_back(dynamics);
+  logger_->addLogEntry("Tasks matrix H" + std::to_string(dynamicsConstraints_.size()), [&, this](){return dynamicsConstraints_.back()->motionConstr().fd().H().norm();});
+  logger_->addLogEntry("Tasks matrix C" + std::to_string(dynamicsConstraints_.size()), [&, this](){return dynamicsConstraints_.back()->motionConstr().fd().C().norm();});
 }
 
 void TasksQPSolver::removeDynamicsConstraint(mc_solver::ConstraintSet * cs)
