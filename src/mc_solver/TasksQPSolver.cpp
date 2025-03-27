@@ -201,7 +201,7 @@ bool TasksQPSolver::run_impl(FeedbackType fType)
 
     if(mass.is_open())
     {
-      mass << dyn->motionConstr().fd().H();
+      mass << std::setprecision(20) << dyn->motionConstr().fd().H();
       mass.close();
       std::cout << "Matrix saved to matrix-tasks-H.csv" << std::endl;
     }else{
@@ -212,7 +212,7 @@ bool TasksQPSolver::run_impl(FeedbackType fType)
 
     if(cor.is_open())
     {
-      cor << dyn->motionConstr().fd().C();
+      cor << std::setprecision(20) << dyn->motionConstr().fd().C();
       cor.close();
       std::cout << "Matrix saved to matrix-tasks-C.csv" << std::endl;
     }else{
@@ -252,7 +252,7 @@ bool TasksQPSolver::runOpenLoop()
           {
             for(const auto& col: row)
             {
-              pos << std::setw(15) << col << " ";
+              pos << std::setprecision(20) << std::setw(15) << col << " ";
             }
             pos << "\n"; 
           }
@@ -271,7 +271,7 @@ bool TasksQPSolver::runOpenLoop()
           {
             for(const auto& col: row)
             {
-              speed << std::setw(15) << col << " ";
+              speed << std::setprecision(20) << std::setw(15) << col << " ";
             }
             speed << "\n"; 
           }
@@ -307,7 +307,7 @@ bool TasksQPSolver::runOpenLoop()
             {
               for(const auto& col: row)
               {
-                acc << std::setw(15) << col << " ";
+                acc << std::setprecision(20) << std::setw(15) << col << " ";
               }
               acc << "\n"; 
             }
@@ -327,7 +327,7 @@ bool TasksQPSolver::runOpenLoop()
             {
               for(const auto& col: row)
               {
-                tau << std::setw(15) << col << " ";
+                tau << std::setprecision(20) << std::setw(15) << col << " ";
               }
               tau << "\n"; 
             }
@@ -346,7 +346,7 @@ bool TasksQPSolver::runOpenLoop()
           for(const auto& f: robot.mbc().force)
           {
 
-            force << f;
+            force << std::setprecision(20) << f;
             force << "\n";
 
           }

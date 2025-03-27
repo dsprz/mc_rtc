@@ -14,7 +14,7 @@
 
 namespace mc_solver
 {
-
+/** For TVM see TVMQPSolver.cpp: contact is added and updated through the setContacts call*/
 static mc_rtc::void_ptr make_constraint(QPSolver::Backend backend,
                                         double timeStep,
                                         ContactConstraint::ContactType contactType)
