@@ -21,6 +21,36 @@ BSpline::BSpline(double duration,
   update();
 }
 
+
+BSpline::BSpline(double duration,
+                 const Eigen::Vector3d & start,
+                 const Eigen::Vector3d & target,
+                 const curve_constraints_t & constr,
+                 const std::vector<Eigen::Vector3d> & waypoints)
+: Spline<Eigen::Vector3d, std::vector<Eigen::Vector3d>>(duration, start, target, waypoints)
+{
+  update_with_constraints(constr);
+}
+
+void BSpline::update_with_constraints(const curve_constraints_t & constr)
+{
+  if(needsUpdate_)
+  {
+    // Waypoints including start and target position
+    std::vector<Eigen::Vector3d> waypoints;
+    waypoints.reserve(waypoints_.size() + 2);
+    waypoints.push_back(start_);
+    for(const auto & wp : waypoints_) { waypoints.push_back(wp); }
+    waypoints.push_back(target_);
+    spline.reset(new BSpline::bezier_curve_t(waypoints.begin(),
+                                              waypoints.end(), 
+                                              constr,
+                                              0.0,
+                                              duration_));
+    samples_ = this->sampleTrajectory();
+    needsUpdate_ = false;
+  }
+}
 void BSpline::update()
 {
   if(needsUpdate_)
