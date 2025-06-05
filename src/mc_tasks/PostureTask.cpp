@@ -356,6 +356,7 @@ void PostureTask::update(mc_solver::QPSolver & solver)
 void PostureTask::posture(const std::vector<std::vector<double>> & p)
 {
   posture_ = p;
+  
   switch(backend_)
   {
     case Backend::Tasks:
