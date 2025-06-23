@@ -192,10 +192,10 @@ bool TasksQPSolver::run_impl(FeedbackType fType)
   }
   for(auto * dyn : dynamicsConstraints_)
   {
-    std::cout << "begin" << std::endl;
+    // std::cout << "begin" << std::endl;
     dyn->motionConstr().computeTorque(solver_.alphaDVec(), solver_.lambdaVec());
     rbd::vectorToParam(dyn->motionConstr().torque(), robot(dyn->robotIndex()).mbc().jointTorque);
-    std::cout << "finish" << std::endl;
+    // std::cout << "finish" << std::endl;
 
     std::ofstream mass("matrix-tasks-H.csv");
 
@@ -203,7 +203,7 @@ bool TasksQPSolver::run_impl(FeedbackType fType)
     {
       mass << std::setprecision(20) << dyn->motionConstr().fd().H();
       mass.close();
-      std::cout << "Matrix saved to matrix-tasks-H.csv" << std::endl;
+      // std::cout << "Matrix saved to matrix-tasks-H.csv" << std::endl;
     }else{
       std::cerr << "Error opening file" << std::endl;
     } 
@@ -214,7 +214,7 @@ bool TasksQPSolver::run_impl(FeedbackType fType)
     {
       cor << std::setprecision(20) << dyn->motionConstr().fd().C();
       cor.close();
-      std::cout << "Matrix saved to matrix-tasks-C.csv" << std::endl;
+      // std::cout << "Matrix saved to matrix-tasks-C.csv" << std::endl;
     }else{
       std::cerr << "Error opening file" << std::endl;
     } 
@@ -236,11 +236,11 @@ bool TasksQPSolver::runOpenLoop()
   int i = 0;
   for(auto & robot : *robots_p)
   {
-     std::cout << "i: " << i << std::endl; 
+    //  std::cout << "i: " << i << std::endl; 
 
     if(i == 0)
     {
-      std :: cout  << robot.name() << std::endl;
+      // std :: cout  << robot.name() << std::endl;
       //print q, qdot
 
       // Prints q 
@@ -257,7 +257,7 @@ bool TasksQPSolver::runOpenLoop()
             pos << "\n"; 
           }
           pos.close();
-          std::cout << "Matrix saved to tasks-q.csv" << std::endl;
+          // std::cout << "Matrix saved to tasks-q.csv" << std::endl;
         }else{
           std::cerr << "Error opening q" << std::endl;
         } 
@@ -276,7 +276,7 @@ bool TasksQPSolver::runOpenLoop()
             speed << "\n"; 
           }
         speed.close();
-        std::cout << "Matrix saved to tasks-alpha.csv" << std::endl;
+        // std::cout << "Matrix saved to tasks-alpha.csv" << std::endl;
       }else{
         std::cerr << "Error opening alpha" << std::endl;
       } 
@@ -312,7 +312,7 @@ bool TasksQPSolver::runOpenLoop()
               acc << "\n"; 
             }
           acc.close();
-          std::cout << "Matrix saved to tasks-alphaD.csv" << std::endl;
+          // std::cout << "Matrix saved to tasks-alphaD.csv" << std::endl;
         }else{
           std::cerr << "Error opening alphaD" << std::endl;
         } 
@@ -332,7 +332,7 @@ bool TasksQPSolver::runOpenLoop()
               tau << "\n"; 
             }
           tau.close();
-          std::cout << "Matrix saved to tasks-tau.csv" << std::endl;
+          // std::cout << "Matrix saved to tasks-tau.csv" << std::endl;
         }else{
           std::cerr << "Error opening tau" << std::endl;
         } 
@@ -351,7 +351,7 @@ bool TasksQPSolver::runOpenLoop()
 
           }
           force.close();
-          std::cout << "Matrix saved to tasks-force.csv" << std::endl;
+          // std::cout << "Matrix saved to tasks-force.csv" << std::endl;
         }else{
           std::cerr << "Error opening force" << std::endl;
         } 
@@ -465,7 +465,7 @@ bool TasksQPSolver::runClosedLoop(bool integrateControlState)
 
     if(i == 0)
     {
-      std :: cout  << robot.name() << std::endl;
+      // std :: cout  << robot.name() << std::endl;
       //print q, qdot
 
       // Prints q 
@@ -482,7 +482,7 @@ bool TasksQPSolver::runClosedLoop(bool integrateControlState)
             pos << "\n"; 
           }
           pos.close();
-          std::cout << "Matrix saved to tasksrobot-q.csv" << std::endl;
+          // std::cout << "Matrix saved to tasksrobot-q.csv" << std::endl;
         }else{
           std::cerr << "Error opening q" << std::endl;
         } 
@@ -501,7 +501,7 @@ bool TasksQPSolver::runClosedLoop(bool integrateControlState)
             speed << "\n"; 
           }
         speed.close();
-        std::cout << "Matrix saved to tasks-alpha.csv" << std::endl;
+        // std::cout << "Matrix saved to tasks-alpha.csv" << std::endl;
       }else{
         std::cerr << "Error opening alpha" << std::endl;
       } 
@@ -552,7 +552,7 @@ bool TasksQPSolver::runClosedLoop(bool integrateControlState)
               acc << "\n"; 
             }
           acc.close();
-          std::cout << "Matrix saved to tasks-alphaD.csv" << std::endl;
+          // std::cout << "Matrix saved to tasks-alphaD.csv" << std::endl;
         }else{
           std::cerr << "Error opening alphaD" << std::endl;
         } 
@@ -572,7 +572,7 @@ bool TasksQPSolver::runClosedLoop(bool integrateControlState)
               tau << "\n"; 
             }
           tau.close();
-          std::cout << "Matrix saved to tasks-tau.csv" << std::endl;
+          // std::cout << "Matrix saved to tasks-tau.csv" << std::endl;
         }else{
           std::cerr << "Error opening tau" << std::endl;
         } 
@@ -591,7 +591,7 @@ bool TasksQPSolver::runClosedLoop(bool integrateControlState)
 
           }
           force.close();
-          std::cout << "Matrix saved to tasks-force.csv" << std::endl;
+          // std::cout << "Matrix saved to tasks-force.csv" << std::endl;
         }else{
           std::cerr << "Error opening force" << std::endl;
         } 

@@ -43,6 +43,36 @@ SplineTrajectoryTask<Derived>::SplineTrajectoryTask(const mc_rbdyn::RobotFrame &
   }
 }
 
+
+template<typename Derived>
+SplineTrajectoryTask<Derived>::SplineTrajectoryTask(const mc_rbdyn::RobotFrame & frame,
+                                                    double duration,
+                                                    double stiffness,
+                                                    double weight,
+                                                    const Eigen::Matrix3d & target,
+                                                    const curve_constraints_t & constr,
+                                                    const std::vector<std::pair<double, Eigen::Matrix3d>> & oriWp)
+: TrajectoryTaskGeneric(frame, stiffness, weight), frame_(frame), duration_(duration),
+  oriSpline_(duration, frame.position().rotation(), target, oriWp), dimWeightInterpolator_(), stiffnessInterpolator_(),
+  dampingInterpolator_()
+{
+  type_ = "trajectory";
+  name_ = "trajectory_" + frame.robot().name() + "_" + frame.name();
+
+  switch(backend_)
+  {
+    case Backend::Tasks:
+      finalize<Backend::Tasks, tasks::qp::TransformTask>(robots.mbs(), static_cast<int>(rIndex), frame.body(),
+                                                         frame.position(), frame.X_b_f());
+      break;
+    case Backend::TVM:
+      finalize<Backend::TVM, mc_tvm::TransformFunction>(frame);
+      break;
+    default:
+      mc_rtc::log::error_and_throw("[SplineTrajectoryTask] Not implemented for backend: {}", backend_);
+  }
+}
+
 template<typename Derived>
 std::function<bool(const mc_tasks::MetaTask &, std::string &)> SplineTrajectoryTask<Derived>::buildCompletionCriteria(
     double dt,
@@ -150,6 +180,7 @@ void SplineTrajectoryTask<Derived>::update(mc_solver::QPSolver & solver)
 {
   auto & spline = static_cast<Derived &>(*this).spline();
   spline.samplingPoints(samples_);
+  std::cout << "Using the update function in SplineTrajectoryTask.hpp" << std::endl;
   spline.update();
 
   if(!paused_)

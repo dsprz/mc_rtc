@@ -764,7 +764,7 @@ void MCController::reset(const ControllerResetData & reset_data)
 
 void MCController::updateContacts()
 {
-  mc_rtc::log::info("I'm in update contacts");
+  // mc_rtc::log::info("I'm in update contacts");
   if(contacts_changed_ && contact_constraint_)
   {
     std::vector<mc_rbdyn::Contact> contacts;

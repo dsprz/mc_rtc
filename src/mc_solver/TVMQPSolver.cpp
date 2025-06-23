@@ -136,7 +136,7 @@ bool TVMQPSolver::runOpenLoop()
   int i = 0;
   for(auto & robot : *robots_p)
   {
-     std::cout << "i: " << i << std::endl;
+    //  std::cout << "i: " << i << std::endl;
      std::cout << robot.name() << std ::endl; 
 
     if(i == 0)
@@ -150,7 +150,7 @@ bool TVMQPSolver::runOpenLoop()
         {
           pos << std::setprecision(20) << std::setw(15) << robot.tvmRobot().q()->value() << " ";
           pos.close();
-          std::cout << "Matrix saved to tvmrobot-q.csv" << std::endl;
+          // std::cout << "Matrix saved to tvmrobot-q.csv" << std::endl;
         }else{
           std::cerr << "Error opening tvmpos" << std::endl;
         } 
@@ -162,7 +162,7 @@ bool TVMQPSolver::runOpenLoop()
       {
         speed << std::setprecision(20) << std::setw(15) << robot.tvmRobot().alpha()->value() << " ";
         speed.close();
-        std::cout << "Matrix saved to tvmrobot-alpha.csv" << std::endl;
+        // std::cout << "Matrix saved to tvmrobot-alpha.csv" << std::endl;
       }else{
         std::cerr << "Error opening tvmspeed" << std::endl;
       } 
@@ -180,7 +180,7 @@ bool TVMQPSolver::runOpenLoop()
             posR << "\n"; 
           }
           posR.close();
-          std::cout << "Matrix saved to robot-q.csv" << std::endl;
+          // std::cout << "Matrix saved to robot-q.csv" << std::endl;
         }else{
           std::cerr << "Error opening pos" << std::endl;
         } 
@@ -198,7 +198,7 @@ bool TVMQPSolver::runOpenLoop()
             speedR << "\n"; 
           }
         speedR.close();
-        std::cout << "Matrix saved to robot-alpha.csv" << std::endl;
+        // std::cout << "Matrix saved to robot-alpha.csv" << std::endl;
       }else{
         std::cerr << "Error opening speed" << std::endl;
       } 
@@ -227,7 +227,7 @@ bool TVMQPSolver::runOpenLoop()
         {
           mass << std::setprecision(20) << robot.tvmRobot().H().matrix();
           mass.close();
-          std::cout << "Matrix saved to matrix-tvm-H.csv" << std::endl;
+          // std::cout << "Matrix saved to matrix-tvm-H.csv" << std::endl;
         }else{
           std::cerr << "Error opening matrix-tvm-H" << std::endl;
         }  
@@ -238,7 +238,7 @@ bool TVMQPSolver::runOpenLoop()
         {
           cor << std::setprecision(20) << robot.tvmRobot().C().matrix();
           cor.close();
-          std::cout << "Matrix saved to matrix-tvm-C.csv" << std::endl;
+          // std::cout << "Matrix saved to matrix-tvm-C.csv" << std::endl;
         }else{
           std::cerr << "Error opening matrix-tvm-C" << std::endl;
         }
@@ -257,7 +257,7 @@ bool TVMQPSolver::runOpenLoop()
               accR << "\n"; 
             }
           accR.close();
-          std::cout << "Matrix saved to robot-alphaD.csv" << std::endl;
+          // std::cout << "Matrix saved to robot-alphaD.csv" << std::endl;
         }else{
           std::cerr << "Error opening speed" << std::endl;
         } 
@@ -277,7 +277,7 @@ bool TVMQPSolver::runOpenLoop()
               tau << "\n"; 
             }
           tau.close();
-          std::cout << "Matrix saved to robot-tau.csv" << std::endl;
+          // std::cout << "Matrix saved to robot-tau.csv" << std::endl;
         }else{
           std::cerr << "Error opening tau" << std::endl;
         } 
@@ -296,7 +296,7 @@ bool TVMQPSolver::runOpenLoop()
 
           }
           force.close();
-          std::cout << "Matrix saved to robot-force.csv" << std::endl;
+          // std::cout << "Matrix saved to robot-force.csv" << std::endl;
         }else{
           std::cerr << "Error opening force" << std::endl;
         } 
@@ -308,7 +308,7 @@ bool TVMQPSolver::runOpenLoop()
     {
       acc << std::setprecision(20) << std::setw(15) << robot.tvmRobot().alphaD()->value() << " ";
       acc.close();
-      std::cout << "Matrix saved to tvmrobot-alphaD.csv" << std::endl;
+      // std::cout << "Matrix saved to tvmrobot-alphaD.csv" << std::endl;
     }else{
       std::cerr << "Error opening acc" << std::endl;
     } 
@@ -320,7 +320,7 @@ bool TVMQPSolver::runOpenLoop()
       {
         torque << std::setprecision(20) << std::setw(15) << robot.tvmRobot().tau()->value() << " ";
         torque.close();
-        std::cout << "Matrix saved to tvmrobot-torque.csv" << std::endl;
+        // std::cout << "Matrix saved to tvmrobot-torque.csv" << std::endl;
       }else{
         std::cerr << "Error opening torque" << std::endl;
       } 
@@ -332,7 +332,7 @@ bool TVMQPSolver::runOpenLoop()
       {
         forces << std::setprecision(20) << std::setw(15) << robot.tvmRobot().tauExternal().value() << " ";
         forces.close();
-        std::cout << "Matrix saved to tvm-tauexternal.csv" << std::endl;
+        // std::cout << "Matrix saved to tvm-tauexternal.csv" << std::endl;
       }else{
         std::cerr << "Error opening tau external" << std::endl;
       } 
@@ -429,7 +429,7 @@ bool TVMQPSolver::runClosedLoop(bool integrateControlState)
     robot.forwardVelocity();
     robot.forwardAcceleration();
 
-    std::cout << "i: " << i << std::endl; 
+    // std::cout << "i: " << i << std::endl; 
 
     if(i == 0)
     {
@@ -442,7 +442,7 @@ bool TVMQPSolver::runClosedLoop(bool integrateControlState)
         {
           pos << std::setprecision(20) << std::setw(15) << robot.tvmRobot().q()->value() << " ";
           pos.close();
-          std::cout << "Matrix saved to tvmrobot-q.csv" << std::endl;
+          // std::cout << "Matrix saved to tvmrobot-q.csv" << std::endl;
         }else{
           std::cerr << "Error opening tvmpos" << std::endl;
         } 
@@ -454,7 +454,7 @@ bool TVMQPSolver::runClosedLoop(bool integrateControlState)
       {
         speed << std::setprecision(20) << std::setw(15) << robot.tvmRobot().alpha()->value() << " ";
         speed.close();
-        std::cout << "Matrix saved to tvmrobot-alpha.csv" << std::endl;
+        // std::cout << "Matrix saved to tvmrobot-alpha.csv" << std::endl;
       }else{
         std::cerr << "Error opening tvmspeed" << std::endl;
       } 
@@ -472,7 +472,7 @@ bool TVMQPSolver::runClosedLoop(bool integrateControlState)
             posR << "\n"; 
           }
           posR.close();
-          std::cout << "Matrix saved to robot-q.csv" << std::endl;
+          // std::cout << "Matrix saved to robot-q.csv" << std::endl;
         }else{
           std::cerr << "Error opening pos" << std::endl;
         } 
@@ -490,7 +490,7 @@ bool TVMQPSolver::runClosedLoop(bool integrateControlState)
             speedR << "\n"; 
           }
         speedR.close();
-        std::cout << "Matrix saved to robot-alpha.csv" << std::endl;
+        // std::cout << "Matrix saved to robot-alpha.csv" << std::endl;
       }else{
         std::cerr << "Error opening speed" << std::endl;
       } 
@@ -528,7 +528,7 @@ bool TVMQPSolver::runClosedLoop(bool integrateControlState)
               accR << "\n"; 
             }
           accR.close();
-          std::cout << "Matrix saved to robot-alphaD.csv" << std::endl;
+          // std::cout << "Matrix saved to robot-alphaD.csv" << std::endl;
         }else{
           std::cerr << "Error opening speed" << std::endl;
         } 
@@ -548,7 +548,7 @@ bool TVMQPSolver::runClosedLoop(bool integrateControlState)
               tau << "\n"; 
             }
           tau.close();
-          std::cout << "Matrix saved to robot-tau.csv" << std::endl;
+          // std::cout << "Matrix saved to robot-tau.csv" << std::endl;
         }else{
           std::cerr << "Error opening tau" << std::endl;
         } 
@@ -567,7 +567,7 @@ bool TVMQPSolver::runClosedLoop(bool integrateControlState)
 
           }
           force.close();
-          std::cout << "Matrix saved to robot-force.csv" << std::endl;
+          // std::cout << "Matrix saved to robot-force.csv" << std::endl;
         }else{
           std::cerr << "Error opening force" << std::endl;
         } 
@@ -580,7 +580,7 @@ bool TVMQPSolver::runClosedLoop(bool integrateControlState)
     {
       mass << std::setprecision(20) << robot.tvmRobot().H().matrix();
       mass.close();
-      std::cout << "Matrix saved to matrix-tvm-H.csv" << std::endl;
+      // std::cout << "Matrix saved to matrix-tvm-H.csv" << std::endl;
     }else{
       std::cerr << "Error opening file" << std::endl;
     }  
@@ -591,7 +591,7 @@ bool TVMQPSolver::runClosedLoop(bool integrateControlState)
     {
       cor << std::setprecision(20) << robot.tvmRobot().C().matrix();
       cor.close();
-      std::cout << "Matrix saved to matrix-tvm-C.csv" << std::endl;
+      // std::cout << "Matrix saved to matrix-tvm-C.csv" << std::endl;
     }else{
       std::cerr << "Error opening file" << std::endl;
     }  
@@ -603,7 +603,7 @@ bool TVMQPSolver::runClosedLoop(bool integrateControlState)
     {
       acc << std::setprecision(20) << std::setw(15) << robot.tvmRobot().alphaD()->value() << " ";
       acc.close();
-      std::cout << "Matrix saved to tvmrobot-alphaD.csv" << std::endl;
+      // std::cout << "Matrix saved to tvmrobot-alphaD.csv" << std::endl;
     }else{
       std::cerr << "Error opening acc" << std::endl;
     } 
@@ -615,7 +615,7 @@ bool TVMQPSolver::runClosedLoop(bool integrateControlState)
   {
     torque << std::setprecision(20) << std::setw(15) << robot.tvmRobot().tau()->value() << " ";
     torque.close();
-    std::cout << "Matrix saved to tvmrobot-torque.csv" << std::endl;
+    // std::cout << "Matrix saved to tvmrobot-torque.csv" << std::endl;
   }else{
     std::cerr << "Error opening torque" << std::endl;
   } 
@@ -627,7 +627,7 @@ bool TVMQPSolver::runClosedLoop(bool integrateControlState)
   {
     forces << std::setprecision(20) << std::setw(15) << robot.tvmRobot().tauExternal().value() << " ";
     forces.close();
-    std::cout << "Matrix saved to tvm-tauexternal.csv" << std::endl;
+    // std::cout << "Matrix saved to tvm-tauexternal.csv" << std::endl;
   }else{
     std::cerr << "Error opening tau external" << std::endl;
   } 

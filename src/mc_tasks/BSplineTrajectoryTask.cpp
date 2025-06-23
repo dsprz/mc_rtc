@@ -30,6 +30,7 @@ BSplineTrajectoryTask::BSplineTrajectoryTask(const mc_rbdyn::Robots & robots,
                                              const std::vector<std::pair<double, Eigen::Matrix3d>> & oriWp)
 : BSplineTrajectoryTask(robots.robot(robotIndex).frame(surfaceName), duration, stiffness, weight, target, posWp, oriWp)
 {
+  std::cout << "Using the BSplineTrajectoryTask constructor WITHOUT constraints" << std::endl;
 }
 
 BSplineTrajectoryTask::BSplineTrajectoryTask(const mc_rbdyn::RobotFrame & frame,
@@ -44,6 +45,8 @@ BSplineTrajectoryTask::BSplineTrajectoryTask(const mc_rbdyn::RobotFrame & frame,
 {
   type_ = "bspline_trajectory";
   name_ = "bspline_trajectory_" + frame.robot().name() + "_" + frame.name();
+  std::cout << "Using the BSplineTrajectoryTask constructor WITHOUT constraints" << std::endl;
+
 }
 
 // Add the declaration in /home/jimmyvu/Documents/mc_rtc/src/mc_rtc/include/mc_tasks/BSplineTrajectoryTask.h
@@ -69,6 +72,9 @@ BSplineTrajectoryTask::BSplineTrajectoryTask(const mc_rbdyn::RobotFrame & frame,
 {
   type_ = "bspline_trajectory";
   name_ = "bspline_trajectory_" + frame.robot().name() + "_" + frame.name();
+  std::cout << "Using the BSplineTrajectoryTask constructor with constraints" << std::endl;
+  std::cout << "In BSplineTrajectoryTask.cpp, printing constr.end_vel.z() : " << constr.end_vel.z() << std::endl;
+  std::cout << "In BSplineTrajectoryTask.cpp, printing bspline.get_bezier().constr.end_vel.z() : " << bspline.get_bezier()->constr_.end_vel.z() << std::endl;
 }
 
 void BSplineTrajectoryTask::posWaypoints(const BSpline::waypoints_t & posWp)
