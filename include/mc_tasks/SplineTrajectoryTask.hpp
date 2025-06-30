@@ -51,8 +51,9 @@ SplineTrajectoryTask<Derived>::SplineTrajectoryTask(const mc_rbdyn::RobotFrame &
                                                     double weight,
                                                     const Eigen::Matrix3d & target,
                                                     const curve_constraints_t & constr,
-                                                    const std::vector<std::pair<double, Eigen::Matrix3d>> & oriWp)
-: TrajectoryTaskGeneric(frame, stiffness, weight), frame_(frame), duration_(duration),
+                                                    const std::vector<std::pair<double, Eigen::Matrix3d>> & oriWp,
+                                                  const bool &verbose_active)
+: TrajectoryTaskGeneric(frame, stiffness, weight), frame_(frame), duration_(duration),verbose_active_(verbose_active),
   oriSpline_(duration, frame.position().rotation(), target, oriWp), dimWeightInterpolator_(), stiffnessInterpolator_(),
   dampingInterpolator_()
 {
@@ -180,7 +181,9 @@ void SplineTrajectoryTask<Derived>::update(mc_solver::QPSolver & solver)
 {
   auto & spline = static_cast<Derived &>(*this).spline();
   spline.samplingPoints(samples_);
-  std::cout << "Using the update function in SplineTrajectoryTask.hpp" << std::endl;
+  if (verbose_active_) {
+    std::cout << "Using the update function in SplineTrajectoryTask.hpp" << std::endl;
+  }
   spline.update();
 
   if(!paused_)

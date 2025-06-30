@@ -48,7 +48,8 @@ public:
                         double weight,
                         const sva::PTransformd & target,
                         const waypoints_t & posWp = {},
-                        const std::vector<std::pair<double, Eigen::Matrix3d>> & oriWp = {});
+                        const std::vector<std::pair<double, Eigen::Matrix3d>> & oriWp = {},
+                      const bool &verbose_active = false);
 
   /**
    * \brief Creates a trajectory that follows a bspline curve
@@ -73,7 +74,8 @@ public:
                         double weight,
                         const sva::PTransformd & target,
                         const waypoints_t & posWp = {},
-                        const std::vector<std::pair<double, Eigen::Matrix3d>> & oriWp = {});
+                        const std::vector<std::pair<double, Eigen::Matrix3d>> & oriWp = {},
+                      const bool &verbose_active = false);
 
 
   typedef Eigen::Vector3d Point;
@@ -87,7 +89,8 @@ public:
                       const sva::PTransformd & target,
                       const curve_constraints_t & constr = {},
                       const waypoints_t & posWp = {},
-                      const std::vector<std::pair<double, Eigen::Matrix3d>> & oriWp = {});
+                      const std::vector<std::pair<double, Eigen::Matrix3d>> & oriWp = {},
+                    const bool &verbose_active = false);
 
 
   /*! \brief const accessor to the underlying spline (used by SplineTrajectoryTask)
@@ -111,6 +114,7 @@ public:
    * Shouldn't include the starting and target position (use target() instead).
    */
   void posWaypoints(const waypoints_t & posWp);
+  bool verbose_active = false;
 
 protected:
   /*! \brief Sets the curve target pose

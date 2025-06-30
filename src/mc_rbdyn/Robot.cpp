@@ -527,16 +527,28 @@ const RobotModule & Robot::module() const
 
 void Robot::addBodySensor(const BodySensor & sensor)
 {
+  std::cout << "addBodySensor function begin" << std::endl;
   if(!hasBodySensor(sensor.name()))
   {
+    std::cout << "trying to push_back a sensor" << std::endl;
     data_->bodySensors.push_back(sensor);
+    std::cout << "sensor successfully pushed back" << std::endl;
+
+    std::cout << "trying to insert a sensor" << std::endl;
     data_->bodySensorsIndex.insert({sensor.name(), data_->bodySensors.size() - 1});
+    std::cout << "sensor successfully inserted" << std::endl;
+  
 
     if(!bodyHasBodySensor(sensor.parentBody()))
+    std::cout << "trying to insert a sensor parent body" << std::endl;
       data_->bodyBodySensors.insert({sensor.parentBody(), data_->bodySensors.size() - 1});
+    std::cout << "sensor successfully inserted parent body" << std::endl;
+  
   }
 
   else { mc_rtc::log::error_and_throw("Body sensor named {} already attached to {}", sensor.name(), this->name()); }
+  std::cout << "addBodySensor function end" << std::endl;
+
 }
 
 const BodySensor & Robot::bodySensor(const std::string & name) const

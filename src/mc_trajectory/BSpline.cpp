@@ -15,10 +15,15 @@ namespace mc_trajectory
 BSpline::BSpline(double duration,
                  const Eigen::Vector3d & start,
                  const Eigen::Vector3d & target,
-                 const std::vector<Eigen::Vector3d> & waypoints)
-: Spline<Eigen::Vector3d, std::vector<Eigen::Vector3d>>(duration, start, target, waypoints)
+                 const std::vector<Eigen::Vector3d> & waypoints,
+                const bool &verbose_active)
+: Spline<Eigen::Vector3d, std::vector<Eigen::Vector3d>>(duration, start, target, waypoints), 
+verbose_active_(verbose_active)
 {
-  std::cout << "Using the BSpline constructor without constraints" << std::endl;
+  if (verbose_active_)
+  {
+    std::cout << "Using the BSpline constructor without constraints" << std::endl;
+  }
   with_constraints = false;
   update();
 }
@@ -28,11 +33,18 @@ BSpline::BSpline(double duration,
                  const Eigen::Vector3d & start,
                  const Eigen::Vector3d & target,
                  const curve_constraints_t & constr,
-                 const std::vector<Eigen::Vector3d> & waypoints)
-: Spline<Eigen::Vector3d, std::vector<Eigen::Vector3d>>(duration, start, target, waypoints), constr_(constr)
+                 const std::vector<Eigen::Vector3d> & waypoints,
+                const bool &verbose_active)
+: Spline<Eigen::Vector3d, std::vector<Eigen::Vector3d>>(duration, start, target, waypoints), 
+constr_(constr),
+verbose_active_(verbose_active)
 {
   with_constraints = true;
-  std::cout << "Using the BSpline constructor with constraints" << std::endl;
+  if(verbose_active_)
+  {
+    std::cout << "verbose is active" << std::endl;
+    std::cout << "Using the BSpline constructor with constraints" << std::endl;
+  }
   update();
 }
 
@@ -50,7 +62,9 @@ void BSpline::update()
     waypoints.push_back(target_);
     if (with_constraints)
     {
-      std::cout << "Using the BSpline update function with constraints" << std::endl;
+      if (verbose_active_) {
+        std::cout << "Using the BSpline update function with constraints" << std::endl;
+      }
       spline.reset(new BSpline::bezier_curve_t(waypoints.begin(),
       waypoints.end(), 
       constr_,
@@ -58,7 +72,9 @@ void BSpline::update()
       duration_));
     }
     else{
-      std::cout << "Using the BSpline update function WITHOUT constraints" << std::endl;
+      if (verbose_active_) {
+        std::cout << "Using the BSpline update function WITHOUT constraints" << std::endl;
+      }
       spline.reset(new BSpline::bezier_curve_t(waypoints.begin(), waypoints.end(), 0.0, duration_));
     }
     samples_ = this->sampleTrajectory();

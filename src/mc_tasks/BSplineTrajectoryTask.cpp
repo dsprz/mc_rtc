@@ -27,10 +27,15 @@ BSplineTrajectoryTask::BSplineTrajectoryTask(const mc_rbdyn::Robots & robots,
                                              double weight,
                                              const sva::PTransformd & target,
                                              const waypoints_t & posWp,
-                                             const std::vector<std::pair<double, Eigen::Matrix3d>> & oriWp)
+                                             const std::vector<std::pair<double, Eigen::Matrix3d>> & oriWp,
+                                            const bool &verbose_active)
+                                            
 : BSplineTrajectoryTask(robots.robot(robotIndex).frame(surfaceName), duration, stiffness, weight, target, posWp, oriWp)
 {
-  std::cout << "Using the BSplineTrajectoryTask constructor WITHOUT constraints" << std::endl;
+  if(verbose_active)
+  {
+    std::cout << "Using the BSplineTrajectoryTask constructor WITHOUT constraints" << std::endl;
+  }
 }
 
 BSplineTrajectoryTask::BSplineTrajectoryTask(const mc_rbdyn::RobotFrame & frame,
@@ -39,13 +44,17 @@ BSplineTrajectoryTask::BSplineTrajectoryTask(const mc_rbdyn::RobotFrame & frame,
                                              double weight,
                                              const sva::PTransformd & target,
                                              const waypoints_t & posWp,
-                                             const std::vector<std::pair<double, Eigen::Matrix3d>> & oriWp)
+                                             const std::vector<std::pair<double, Eigen::Matrix3d>> & oriWp,
+                                            const bool &verbose_active)
 : SplineTrajectoryTask<BSplineTrajectoryTask>(frame, duration, stiffness, weight, target.rotation(), oriWp),
   bspline(duration, frame.position().translation(), target.translation(), posWp)
 {
   type_ = "bspline_trajectory";
   name_ = "bspline_trajectory_" + frame.robot().name() + "_" + frame.name();
-  std::cout << "Using the BSplineTrajectoryTask constructor WITHOUT constraints" << std::endl;
+  if(verbose_active)
+  {
+    std::cout << "Using the BSplineTrajectoryTask constructor WITHOUT constraints" << std::endl;
+  }
 
 }
 
@@ -57,7 +66,8 @@ BSplineTrajectoryTask::BSplineTrajectoryTask(const mc_rbdyn::RobotFrame & frame,
                       const sva::PTransformd & target,
                       const curve_constraints_t & constr,
                       const waypoints_t & posWp,
-                      const std::vector<std::pair<double, Eigen::Matrix3d>> & oriWp)
+                      const std::vector<std::pair<double, Eigen::Matrix3d>> & oriWp,
+                    const bool &verbose_active)
 : SplineTrajectoryTask<BSplineTrajectoryTask>(frame, 
                                               duration, 
                                               stiffness, 
@@ -68,13 +78,17 @@ BSplineTrajectoryTask::BSplineTrajectoryTask(const mc_rbdyn::RobotFrame & frame,
      frame.position().translation(), 
      target.translation(), 
      constr, 
-     posWp)
+     posWp,
+    verbose_active)
 {
   type_ = "bspline_trajectory";
   name_ = "bspline_trajectory_" + frame.robot().name() + "_" + frame.name();
-  std::cout << "Using the BSplineTrajectoryTask constructor with constraints" << std::endl;
-  std::cout << "In BSplineTrajectoryTask.cpp, printing constr.end_vel.z() : " << constr.end_vel.z() << std::endl;
-  std::cout << "In BSplineTrajectoryTask.cpp, printing bspline.get_bezier().constr.end_vel.z() : " << bspline.get_bezier()->constr_.end_vel.z() << std::endl;
+  if(verbose_active)
+  {
+    std::cout << "Using the BSplineTrajectoryTask constructor with constraints" << std::endl;
+    std::cout << "In BSplineTrajectoryTask.cpp, printing constr.end_vel.z() : " << constr.end_vel.z() << std::endl;
+    // std::cout << "In BSplineTrajectoryTask.cpp, printing bspline.get_bezier().constr.end_vel.z() : " << bspline.get_bezier()->constr_.end_vel.z() << std::endl;
+  }
 }
 
 void BSplineTrajectoryTask::posWaypoints(const BSpline::waypoints_t & posWp)

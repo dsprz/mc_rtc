@@ -72,8 +72,8 @@ struct SplineTrajectoryTask : public TrajectoryTaskGeneric
                        double weight,
                        const Eigen::Matrix3d & target,
                        const curve_constraints_t & constr,
-                       const std::vector<std::pair<double, Eigen::Matrix3d>> & oriWp = {});
-
+                       const std::vector<std::pair<double, Eigen::Matrix3d>> & oriWp = {},
+                      const bool &verbose_active = false);
 
   /*! \brief Load parameters from a Configuration object */
   void load(mc_solver::QPSolver & solver, const mc_rtc::Configuration & config) override;
@@ -378,10 +378,11 @@ protected:
   SequenceInterpolator6d dampingInterpolator_;
 
   bool paused_ = false;
-
   double currTime_ = 0.;
   unsigned samples_ = 20;
   bool inSolver_ = false;
+
+  bool verbose_active_ = false;
 };
 } // namespace mc_tasks
 

@@ -32,7 +32,8 @@ public:
   BSpline(double duration,
           const Eigen::Vector3d & start,
           const Eigen::Vector3d & target,
-          const waypoints_t & waypoints = {});
+          const waypoints_t & waypoints = {},
+        const bool &verbose_active = false);
 
 
   // Jimmy
@@ -44,7 +45,8 @@ public:
           const Eigen::Vector3d & start,
           const Eigen::Vector3d & target,
           const curve_constraints_t & constr = {},
-          const waypoints_t & waypoints = {});
+          const waypoints_t & waypoints = {},
+        const bool &verbose_active = false);
   
   /*! \brief Triggers recreation of the curve. Will only occur if the curve
    * parameters were modified (waypoints, target), or the sampling size has
@@ -85,7 +87,7 @@ private:
   std::unique_ptr<bezier_curve_t> spline = nullptr;  
   curve_constraints_t constr_;
   bool with_constraints = false;
-  
+  bool verbose_active_ = false;
 };
 
 } // namespace mc_trajectory

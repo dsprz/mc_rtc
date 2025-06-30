@@ -521,7 +521,7 @@ bool TasksQPSolver::runClosedLoop(bool integrateControlState)
   if(solver_.solveNoMbcUpdate(robots_p->mbs(), robots_p->mbcs()))
   {
 
-    std :: cout << "robots_p->mbs().size(): " << robots_p->mbs().size() << std::endl;
+    // std :: cout << "robots_p->mbs().size(): " << robots_p->mbs().size() << std::endl;
     for(size_t i = 0; i < robots_p->mbs().size(); ++i)
     {
       auto & robot = robots().robot(i);
